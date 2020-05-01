@@ -1,0 +1,14 @@
+//   大机械臂控制程序   //
+program
+//1、tcp接收位置信息
+run BRtcpreciever.txt  //并行运行tcp接收程序
+//2、利用位置信息移动到目标位置
+extern flag as long  //定义一个标志位，用以判断是否接收到新的数据
+while 1
+    if flag then
+        run BRmovectrl.txt
+        flag = 0//运行结束，置为0，表示无新数据接收
+    end if
+end while
+
+end program

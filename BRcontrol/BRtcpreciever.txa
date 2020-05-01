@@ -1,0 +1,43 @@
+//大机械臂的tcp通信接受协议程序
+program  //程序开始
+dim s as tcpServer // 声明控制器服务器（接受来自服务端（即个人pc）的位置数据等）
+dim ret as long    //定义一个整型变量，用以监听某端口
+dim clientflag as long  //定义一整型，用以表示客户端的标识（句柄）
+clientflag = 0    //0表示没有客户端接入
+dim str as string
+dim strlen as long  //接受到字符的长度
+dim str1[3] as string  //定义一个数组，用于储存分析数据过程的在字符串
+dim index as long    //索引指数
+dim strx as string   //将原字符串str截片后得各部分字符串
+dim stry as string
+dim strz as string
+
+dim shared objlocaton as location
+//定义通讯协议，前五位为x,
+//通讯（接受上位机发给控制器的位置数据）
+ret = s.listen(8080)
+while 1
+//循环查询是否有数据输出
+    sleep 200   //休眠，避免死循环，无法执行其他程序
+    if clientflag = 0 then
+    clientflag = s.accept  //无客户端接入，等待；有接入，返回客户端的标识
+    //获取客户端的句柄标识
+    end if 
+    
+    if clientflag>0 then  
+        str = s.recv(clientflag)  //从客户端获取数据（字符）
+        strlen = str.length
+        if strlen > 0 then //有消息
+            //利用tcp协议分析数据，
+            str1 = str.split(",")
+            strx = str1[0]
+            stry = str1[1]
+            strz = str1[2]
+            //将分析得到的字符串，直接转化为点位数据tolocation
+            locx = strx.toLocation
+            locy = stry.toLocation
+            locz = strz.toLocation
+        end if 
+    end if 
+end while
+end program
